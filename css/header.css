@@ -1,0 +1,27 @@
+header {
+  border-bottom: 1px solid black;
+  height: 60px;
+}
+
+.menu-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.icons_1 {
+  width: 40px;
+}
+.menu-bar__font {
+  font-size: 40px;
+  font-family: "Madimi One", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+.menu-bar_icons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  margin-right: 40px;
+  gap: 10px;
+}
