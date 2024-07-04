@@ -1,12 +1,13 @@
-let answer = "APPLE";
+let answer = "APPLE"; // 정답 단어
 
-let index = 0;
-
-let attemps = 0;
+let index = 0; // 현재 글자 위치 인덱스
+let attempts = 0; // 시도 횟수
 
 let timer;
+
 function appStart() {
   const displayGameOver = () => {
+    // 게임 종료 메시지 표시
     const div = document.createElement("div");
     div.innerText = "게임이 종료되었습니다😊";
     div.style =
@@ -15,61 +16,70 @@ function appStart() {
   };
 
   const nextLine = () => {
-    attemps += 1;
+    // 다음 줄로 이동
+    attempts += 1;
     index = 0;
   };
 
   const gameover = () => {
+    // 게임 종료 처리
     window.removeEventListener("keydown", handleKeyDown);
     displayGameOver();
     clearInterval(timer);
   };
+
   const handleEnterKey = () => {
-    //엔터 입력시 나오는  i 의 횟수를 나타내는 함수
-    let count = 0;
+    // 엔터 키 입력 시 동작
+    let correctCount = 0; // 맞춘 글자 수
     for (let i = 0; i < 5; i++) {
       const block = document.querySelector(
-        `.board-block[data-index='${attemps}${i}']`
+        `.board-block[data-index='${attempts}${i}']`
       );
-      const input_text = block.innerText;
-      const answer_text = answer[i];
-      console.log("입력한 글자", input_text, "정답", answer_text);
-      if (input_text === answer_text) {
-        block.style.background = "#6AAA64";
-        count += 1;
-      } else if (answer.includes(input_text))
-        block.style.background = "#C9B458";
-      else block.style.background = "#787C7E";
+      const inputText = block.innerText;
+      const answerText = answer[i];
+      if (inputText === answerText) {
+        block.style.background = "#6AAA64"; // 정답인 경우
+        correctCount += 1;
+      } else if (answer.includes(inputText)) {
+        block.style.background = "#C9B458"; // 정답에 포함되지만 위치가 다른 경우
+      } else {
+        block.style.background = "#787C7E"; // 정답에 포함되지 않는 경우
+      }
       block.style.color = "white";
     }
-    if (count === 5) {
-      gameover();
-    } else if (nextLine());
+    if (correctCount === 5) {
+      gameover(); // 5글자 모두 맞춘 경우 게임 종료
+    } else if (attempts === 5) {
+      gameover(); // 시도 횟수 6번인 경우 게임 종료
+    } else {
+      nextLine(); // 다음 줄로 이동
+    }
   };
 
   const handleBackspace = () => {
+    // 백스페이스 키 입력 시 동작
     if (index > 0) {
       const preBlock = document.querySelector(
-        `.board-block[data-index='${attemps}${index - 1}']`
+        `.board-block[data-index='${attempts}${index - 1}']`
       );
       preBlock.innerText = "";
+      index -= 1;
     }
-    if (index !== 0) index -= 1;
   };
 
   const handleKeyDown = (e) => {
+    // 키 입력 처리
     const key = e.key.toUpperCase();
     const keyCode = e.keyCode;
     const thisBlock = document.querySelector(
-      `.board-block[data-index='${attemps}${index}']`
+      `.board-block[data-index='${attempts}${index}']`
     );
 
-    if (e.key === "Backspace") handleBackspace();
-    else if (index === 5) {
-      if (e.key === "Enter") {
-        handleEnterKey();
-      } else return;
-    } else if (65 <= keyCode && keyCode <= 90) {
+    if (e.key === "Backspace") {
+      handleBackspace();
+    } else if (index === 5 && e.key === "Enter") {
+      handleEnterKey();
+    } else if (65 <= keyCode && keyCode <= 90 && index < 5) {
       thisBlock.innerText = key;
       index += 1;
     }
@@ -77,18 +87,18 @@ function appStart() {
   };
 
   const setTimer = () => {
-    const cur_time = new Date();
+    const startTime = new Date();
 
-    function setTime() {
-      const times = new Date();
-      const waste_time = new Date(times - cur_time); //시작시간에서 현재시간 빼주면 타이머처럼 흘러감.
-      const min = waste_time.getMinutes().toString(); //getMinutes 뒤에 반드시 () 붙여주기!
-      const sec = waste_time.getSeconds().toString();
-      const timeH1 = document.querySelector("#timer");
-      timeH1.innerText = `${min.padStart(2, "0")}:${sec.padStart(2, "0")}`; //padStart 는 string 화 시켜줘야 쓸수있음.
-    }
+    const updateTimer = () => {
+      const currentTime = new Date();
+      const elapsedTime = new Date(currentTime - startTime);
+      const minutes = elapsedTime.getMinutes().toString().padStart(2, "0");
+      const seconds = elapsedTime.getSeconds().toString().padStart(2, "0");
+      const timerDisplay = document.querySelector("#timer");
+      timerDisplay.innerText = `${minutes}:${seconds}`;
+    };
 
-    timer = setInterval(setTime, 1000);
+    timer = setInterval(updateTimer, 1000);
   };
 
   setTimer();
